@@ -1,0 +1,23 @@
+{
+  "name": "opentie-console",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opentie/opentie-console.git"
+  },
+  "author": "opentie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/opentie/opentie-console/issues"
+  },
+  "homepage": "https://github.com/opentie/opentie-console",
+  "dependencies": {
+    "react": "^0.12.2",
+    "react-bootstrap": "git://github.com/opentie/react-bootstrap.git"
+  }
+}
