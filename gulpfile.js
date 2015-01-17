@@ -51,7 +51,7 @@ gulp.task('js', function () {
 
 gulp.task('default', ['html', 'less', 'js']);
 
-gulp.task('watch', ['default'], function () {
+gulp.task('watch', function () {
   gulp.src(SRC.HTML)
     .pipe(watch(SRC.HTML))
     .pipe(gulp.dest('./dist/'));
