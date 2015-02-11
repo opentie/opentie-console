@@ -3,24 +3,42 @@
 global.jQuery = require('jquery');
 require('bootstrap');
 
-var hg = require('mercury');
-var h = require('mercury').h;
+var React = require('react');
+//var jade = require('react-jade');
+var ReactRouter = require('react-router'),
+    Route = React.createFactory(ReactRouter.Route),
+    RouteHandler = React.createFactory(ReactRouter.RouteHandler),
+    DefaultRoute = React.createFactory(ReactRouter.DefaultRoute),
+    NotFoundRoute = React.createFactory(ReactRouter.NotFoundRoute);
 
-function App() {
-  this.state = hg.state({
-    value: hg.value(0),
-    channels: {
-      
-    }
-  });
-}
+var templates = require('./templates');
 
-App.prototype.render = function render(state) {
-  return h('h1', [
-    'ダッシュのボード'
-  ]);
-};
+var App = React.createClass({  
+  render: function() {
+    return templates.Layout({RouteHandler: RouteHandler});
+  }
+});
 
-var app = new App();
+var Dashboard = React.createClass({  
+  render: function() {
+    console.log('わかりがない');
+    return templates.Dashboard();
+  }
+});
 
-hg.app(document.getElementById('main'), app.state, app.render.bind(app));
+var Project = require('./project');
+
+var routes = (
+  Route({ name: 'app', path: "/", handler: App },
+        DefaultRoute({ handler: Dashboard }),
+        Route({ name: 'projects', path: '/projects', handler: Project.Root },
+              //DefaultRoute({ handler: Project.List }),
+              Route({ name: 'new', path: '/projects/new', handler: Project.New })
+             )
+       )
+);
+
+
+ReactRouter.run(routes, function (Handler) {
+  React.render(React.createElement(Handler), document.getElementById('content'));
+});

@@ -4,27 +4,31 @@ var path = require('path');
 
 var gulp = require('gulp'),
     less = require('gulp-less'),
-    source = require('vinyl-source-stream'),
-    buffer = require('vinyl-buffer'),
+    webpack = require('gulp-webpack'),
     uglify = require('gulp-uglify'),
     watchify = require('watchify'),
-    watch = require('gulp-watch'),
-    sourcemaps = require('gulp-sourcemaps'),
-    browserify = require('browserify');
+    watch = require('gulp-watch');
+
+var WebpackDevServer = require("webpack-dev-server");
 
 var SRC = {
   LESS: './src/less/*.less',
   HTML: './src/*.html',
-  JS: './src/js/index.js',
-  FONT: './src/fonts/*'
+  JS: './src/js/**',
+  JADE: './src/jade/**',
+  FONT: './src/fonts/*',
+  IMG: './src/img/*'
 };
 
 var DIST = {
   CSS: './dist/css/',
   HTML: './dist/',
   JS: './dist/js/',
-  FONT: './dist/fonts/'
+  FONT: './dist/fonts/',
+  IMG: './dist/img/'
 };
+
+var WEBPACK_CONFIG = require('./webpack.config');
 
 gulp.task('less', function () {
   gulp.src(SRC.LESS)
@@ -42,41 +46,43 @@ gulp.task('font', function () {
     .pipe(gulp.dest(DIST.FONT));
 });
 
-var bundler = browserify({
-  entries: [SRC.JS],
-  debug: true
+gulp.task('img', function () {
+  gulp.src(SRC.IMG)
+    .pipe(gulp.dest(DIST.IMG));
 });
 
 gulp.task('js', function () {
-  return bundler
-    .bundle()
-    .pipe(source('bundle.js'))
+  gulp.src(WEBPACK_CONFIG.entry)
+    .pipe(webpack(WEBPACK_CONFIG))
+  //.pipe(uglify())
     .pipe(gulp.dest(DIST.JS));
 });
 
-gulp.task('default', ['html', 'less', 'fonts', 'js']);
+gulp.task('default', ['html', 'less', 'font', 'img', 'js']);
 
 gulp.task('watch', function () {
-  gulp.src(SRC.HTML)
-    .pipe(watch(SRC.HTML))
-    .pipe(gulp.dest(DIST.HTML));
-
-  gulp.src(SRC.LESS)
-    .pipe(watch(SRC.LESS))
-    .pipe(less())
-    .pipe(gulp.dest(DIST.CSS));
-
-  gulp.src(SRC.FONT)
-    .pipe(watch(SRC.FONT))
-    .pipe(gulp.dest(DIST.FONT));
-
-  var wbundler = watchify(bundler);
-  function bundle () {
-    return bundler
-      .bundle()
-      .pipe(source('bundle.js'))
-      .pipe(gulp.dest(DIST.JS));    
+  function rule (/* rules */) {
+    var rules = [].slice.call(arguments);
+    return function () {
+      gulp.start(rules);
+    };
   }
-  wbundler.on('update', bundle);
-  bundle();
+
+  watch(SRC.HTML, rule('html'));
+  watch(SRC.FONT, rule('font'));
+  watch(SRC.IMG, rule('img'));
+  watch(SRC.LESS, rule('less'));
+  //watch(SRC.JS, rule('js'));
+  //watch(SRC.JADE, rule('js'));
+
+  var config = Object.create(WEBPACK_CONFIG);
+  config.output.filename = 'js/bundle.js';
+  
+  var compiler = require('webpack')(WEBPACK_CONFIG);
+  new WebpackDevServer(compiler, {
+    contentBase: 'dist'
+  }).listen(8080, '0.0.0.0', function(err) {
+    if(err) throw err;
+  });
+
 });
