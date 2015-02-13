@@ -16,34 +16,21 @@ var SRC = {
   HTML: './src/*.html',
   JS: './src/js/**',
   JADE: './src/jade/**',
-  FONT: './src/fonts/*',
   IMG: './src/img/*'
 };
 
 var DIST = {
   CSS: './dist/css/',
   HTML: './dist/',
-  JS: './dist/js/',
-  FONT: './dist/fonts/',
+  JS: './dist/',
   IMG: './dist/img/'
 };
 
 var WEBPACK_CONFIG = require('./webpack.config');
 
-gulp.task('less', function () {
-  gulp.src(SRC.LESS)
-    .pipe(less())
-    .pipe(gulp.dest(DIST.CSS));
-});
-
 gulp.task('html', function () {
   gulp.src(SRC.HTML)
     .pipe(gulp.dest(DIST.HTML));
-});
-
-gulp.task('font', function () {
-  gulp.src(SRC.FONT)
-    .pipe(gulp.dest(DIST.FONT));
 });
 
 gulp.task('img', function () {
@@ -58,7 +45,7 @@ gulp.task('js', function () {
     .pipe(gulp.dest(DIST.JS));
 });
 
-gulp.task('default', ['html', 'less', 'font', 'img', 'js']);
+gulp.task('default', ['html', 'img', 'js']);
 
 gulp.task('watch', function () {
   function rule (/* rules */) {
@@ -69,11 +56,7 @@ gulp.task('watch', function () {
   }
 
   watch(SRC.HTML, rule('html'));
-  watch(SRC.FONT, rule('font'));
   watch(SRC.IMG, rule('img'));
-  watch(SRC.LESS, rule('less'));
-  //watch(SRC.JS, rule('js'));
-  //watch(SRC.JADE, rule('js'));
 
   var config = Object.create(WEBPACK_CONFIG);
   config.output.filename = 'js/bundle.js';

@@ -1,5 +1,5 @@
 module.exports = {
-  Layout: require('../jade/layout.jade'),
-  Dashboard: require('../jade/dashboard.jade'),
+  Layout: require('./layout.jade'),
+  Dashboard: require('./dashboard.jade'),
   Project: require('./project/templates')
 };
