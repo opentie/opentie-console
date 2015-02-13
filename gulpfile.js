@@ -4,7 +4,7 @@ var path = require('path');
 
 var gulp = require('gulp'),
     less = require('gulp-less'),
-    webpack = require('gulp-webpack'),
+    webpack = require('gulp-webpack-build'),
     uglify = require('gulp-uglify'),
     watchify = require('watchify'),
     watch = require('gulp-watch');
@@ -12,7 +12,6 @@ var gulp = require('gulp'),
 var WebpackDevServer = require("webpack-dev-server");
 
 var SRC = {
-  LESS: './src/less/*.less',
   HTML: './src/*.html',
   JS: './src/js/**',
   JADE: './src/jade/**',
@@ -20,9 +19,7 @@ var SRC = {
 };
 
 var DIST = {
-  CSS: './dist/css/',
   HTML: './dist/',
-  JS: './dist/',
   IMG: './dist/img/'
 };
 
@@ -38,16 +35,18 @@ gulp.task('img', function () {
     .pipe(gulp.dest(DIST.IMG));
 });
 
-gulp.task('js', function () {
-  gulp.src(WEBPACK_CONFIG.entry)
-    .pipe(webpack(WEBPACK_CONFIG))
+gulp.task('webpack', function () {
+  gulp.src(webpack.config.CONFIG_FILENAME)
+    .pipe(webpack.compile(WEBPACK_CONFIG))
   //.pipe(uglify())
-    .pipe(gulp.dest(DIST.JS));
+    .pipe(gulp.dest('./'));
 });
 
-gulp.task('default', ['html', 'img', 'js']);
+gulp.task('default', ['html', 'img', 'webpack']);
 
 gulp.task('watch', function () {
+  gulp.start('default');
+
   function rule (/* rules */) {
     var rules = [].slice.call(arguments);
     return function () {
@@ -59,7 +58,6 @@ gulp.task('watch', function () {
   watch(SRC.IMG, rule('img'));
 
   var config = Object.create(WEBPACK_CONFIG);
-  config.output.filename = 'js/bundle.js';
   
   var compiler = require('webpack')(WEBPACK_CONFIG);
   new WebpackDevServer(compiler, {
