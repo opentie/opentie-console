@@ -1,5 +1,7 @@
 'use strict';
 
+require('bootstrap');
+
 var React = require('react');
 //var jade = require('react-jade');
 var ReactRouter = require('react-router'),
