@@ -3,6 +3,6 @@ var templates = require('./templates');
 
 module.exports = React.createClass({  
   render: function() {
-    return templates.New();
+    return templates.New({ desc: 'ほげあ' });
   }
 });

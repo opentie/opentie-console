@@ -17,6 +17,7 @@ module.exports = {
       { test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery' },
       { test: /\.ts$/  , loader: 'typescript-loader' },
       { test: /\.jade$/, loader: "react-jade-loader" },
+      { test: /\.coffee$/, loader: "imports?cfx=coffeex!coffee" },
 
       { test: /\.woff(\?v=\d+\.\d+\.\d+|\d)?$/,   loader: "url?name=fonts/[name].[ext]&limit=10000&minetype=application/font-woff" },
       { test: /\.woff2(\?v=\d+\.\d+\.\d+|\d)?$/,   loader: "url?name=fonts/[name].[ext]&limit=10000&minetype=application/font-woff" },
